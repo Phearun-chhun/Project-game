@@ -6,8 +6,8 @@ root.geometry("800x700")
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=800)
 # =====================image and background=====================
-bgStart = ImageTk.PhotoImage(Image.open("C:/Users/User/Desktop/Project-game/image/bg-start.png"))
-bgHelp = ImageTk.PhotoImage(Image.open("C:/Users/User/Desktop/Project-game/image/rule.png"))
+bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
+bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
 
 # =====================Start Window=====================
 displayHomeBg = True
@@ -27,12 +27,10 @@ def displayStart():
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
         canvas.create_text(400,650,text='BACK',font='Roboto',tags='back')
 #=====================back to window=====================
-def goBack():
+def goBack(event):
     global displayHomeBg
     displayHomeBg = True        
-    print('error')
     displayStart()
-canvas.tag_bind('back','<Button-1>',goBack)
 # ===================== Display help player to paly this game --------------
 def exitFromGame(event):
     root.destroy()
@@ -46,6 +44,7 @@ def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
     displayStart()
+canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 
