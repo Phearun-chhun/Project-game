@@ -6,9 +6,11 @@ root = Tk()
 root.geometry("800x700")
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=800)
+
 # =====================image and background=====================
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
+
 # =====================sound=====================
 
 # =====================Start Window=====================
@@ -24,7 +26,7 @@ def displayStart():
         canvas.create_text(400,375, text="Exit" ,font=('VNI-Bodon-Poster','25','bold'),tags='exit')
         canvas.create_rectangle(300,420,500,470, fill="white", tags="help", outline="")
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
-        canvas.after(500,displaySound)
+        # canvas.after(500,displaySound)
     else:
         gameRull()       
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
@@ -49,9 +51,8 @@ def displayHelp(event):
     displayStart()
 # =====================display sound=====================
 def displaySound():
+    winsound.PlaySound("sound/lost.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
     
-    winsound.PlaySound('C:/Users/User/Desktop/Project-game/sound',winsound.SND_FILENAME)
-
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
