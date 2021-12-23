@@ -3,7 +3,7 @@ from tkinter import font
 import winsound
 from PIL import ImageTk, Image
 root = Tk()
-root.geometry("800x800")
+root.geometry("800x700")
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=800)
 # =====================image and background=====================
@@ -11,10 +11,10 @@ bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 # =====================variable=====================
-x1 = 50 
-y1 = 660
-x2 = 90
-y2 = 680
+x1 = 2
+y1 = 682
+x2 = 42
+y2 = 702
 displayHomeBg = True
 displayPlayBg = False
 # =====================sound=====================
@@ -39,7 +39,7 @@ def displayBackground():
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        canvas.create_text(650,670,text='Score: ',font=('Roboto','22','bold'),fill='white')
+        canvas.create_text(700,692,text='Score: ',font=('Roboto','22','bold'),fill='white')
         blood()
     else:
         gameRule()       
@@ -76,6 +76,7 @@ def blood():
         canvas.create_rectangle(x1,y1,x2,y2,fill='white')
         x1 += 40
         x2 += 40
+    
 # =====================display button=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
