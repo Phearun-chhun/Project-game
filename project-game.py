@@ -6,6 +6,7 @@ import winsound
 from PIL import ImageTk, Image
 root = Tk()
 root.geometry("800x700")
+root.resizable(False,False)
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=700)
 # =====================image and background=====================
