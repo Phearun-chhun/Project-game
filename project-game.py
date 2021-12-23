@@ -12,7 +12,7 @@ bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
-playerImage = ImageTk.PhotoImage(Image.open("image/plane-player2.png"))
+playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 # =====================variable=====================
 x1 = 2
 y1 = 682
@@ -127,8 +127,8 @@ def moveUp(event):
 def moveDown(event):
     global playerY,paused
     paused = False
-    if playerY <505:
-        playerY +=70 
+    if playerY <610:
+        playerY +=10 
     canvas.moveto(player,playerX,playerY) 
 # =====================blood=====================
 def blood():
