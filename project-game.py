@@ -19,7 +19,7 @@ def displaySound():
 # =====================Start Window=====================
 displayHomeBg = True
 displayPlayBg = False
-def display():
+def displayBackground():
     global displayHomeBg
     canvas.delete("all")
     if displayHomeBg:
@@ -45,12 +45,12 @@ def display():
 def goBack(event):
     global displayHomeBg
     displayHomeBg = True        
-    display()
+    displayBackground()
     
 # ===================== Display help player to paly this game --------------
 def exitFromGame(event):
     root.destroy()
-display()
+displayBackground()
 
 def gameRull():
     canvas.delete("all")
@@ -59,12 +59,12 @@ def gameRull():
 def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
-    display()
+    displayBackground()
 def windowPlay(event):
     global displayPlayBg, displayHomeBg
     displayPlayBg = True
     displayHomeBg = False
-    display()
+    displayBackground()
 # =====================display sound=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
