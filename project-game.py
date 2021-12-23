@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import font
+import random
 import winsound
 from PIL import ImageTk, Image
 root = Tk()
@@ -10,6 +11,7 @@ canvas = Canvas(root, width=800, height=800)
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
+enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 # =====================variable=====================
 x1 = 2
 y1 = 682
@@ -17,13 +19,18 @@ x2 = 42
 y2 = 702
 displayHomeBg = True
 displayPlayBg = False
+listOfEnemies =[]
+moveEnemys = 0
+time = 0
+
 # =====================sound=====================
 def displaySound():
     winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
-    global displayHomeBg
+    global displayHomeBg,time
+    time+=1
     canvas.delete("all")
     if displayHomeBg:
         canvas.create_image(0,0, anchor=NW, image = bgStart)
@@ -40,6 +47,7 @@ def displayBackground():
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,692,text='Score: ',font=('Roboto','22','bold'),fill='white')
+
         blood()
     else:
         gameRule()       
@@ -63,49 +71,38 @@ def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
     displayBackground()
+# ==================================Create  text help==================================================================
+def createHelp():
+    canvas.delete('Exit')
+    canvas.delete('Start')
 # =====================display new window after click start=====================
 def windowPlay(event):
     global displayPlayBg, displayHomeBg
     displayPlayBg = True
     displayHomeBg = False
     displayBackground()
+    createEnemy()
+# =====================create enemies=====================
+def createEnemy():
+    enemy = canvas.create_image(random.randrange(10,630),-30,anchor = NW,image=enemyIamge)
+
+# =====================move enemy=====================    
+def moveEnemy():
+    canvas.move(10,0,createEnemy)
+    canvas.after(1000,createEnemy)
+    createEnemy()
 # =====================blood=====================
 def blood():
     global x1, x2,y1,y2
     for blood in range(5):
         canvas.create_rectangle(x1,y1,x2,y2,fill='white')
         x1 += 40
-        x2 += 40
-    
+        x2 += 40   
 # =====================display button=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ==================================Create  text help==================================================================
-def createHelp():
-    canvas.delete('Exit')
-    canvas.delete('Start')
-    
 canvas.tag_bind("help", "<Button-1>", displayHelp)
 canvas.pack()
 root.mainloop()
