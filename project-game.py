@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import font
 import random
+from types import BuiltinFunctionType
 import winsound
 from PIL import ImageTk, Image
 root = Tk()
@@ -13,6 +14,7 @@ bgHelp = ImageTk.PhotoImage(Image.open("image/Rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
+enemyBullet = ImageTk.PhotoImage(Image.open("image/enBullet.gif"))
 # =====================variable=====================
 x1 = 2
 y1 = 682
@@ -20,9 +22,8 @@ x2 = 42
 y2 = 702
 displayHomeBg = True
 displayPlayBg = False
-listOfEnemies =[]
+listOfEnemy  = []
 moveEnemys = 0
-time = 0
 playerX = 310
 playerY = 500
 paused = False
@@ -32,8 +33,7 @@ def displaySound():
     canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
-    global displayHomeBg,time
-    time+=1
+    global displayHomeBg
     canvas.delete("all")
     if displayHomeBg:
         canvas.create_image(0,0, anchor=NW, image = bgStart)
@@ -86,24 +86,45 @@ def windowPlay(event):
     createEnemy()
     moveEnemy()
     createPlayer()
+    createBullet()
+    moveBullet()
 # =====================create enemies=====================
 def createEnemy():
-    global enemy
-    enemy = canvas.create_image(random.randrange(10,630),-20,anchor = NW,image=enemyIamge)
+    if len(listOfEnemy) < 5:
+        enemy = canvas.create_image(random.randrange(10,630),-20,anchor = NW,image=enemyIamge)
+        listOfEnemy.append(enemy)
+    canvas.after(100,createEnemy)
 # =====================move enemy=====================    
 def moveEnemy():
-    global enemy
-    canvas.move(enemy,0,2)
-    canvas.after(50,moveEnemy)
+    global listOfEnemy
+    deleteEnemy = []
+    for enemies in listOfEnemy:
+        canvas.move(enemies,0,5)
+        position  = canvas.coords(enemies)
+        if position[1] > 650 :
+            deleteEnemy.append(enemies)
+    for enemies in deleteEnemy:
+        listOfEnemy.remove(enemies)
+        canvas.delete(enemies)
+    canvas.after(100,moveEnemy)
+            
 # =====================create player=====================
 def createPlayer():
     global player
     player = canvas.create_image(300,450,anchor = NW, image= playerImage)
+# =====================createBullet=====================
+def createBullet():
+    global bullet 
+    bullet = canvas.create_image(random.randrange(10,630),-10,anchor = NW,image = enemyBullet)
+# =====================moveBullet=====================
+def moveBullet():
+    global bullet
+    canvas.move(bullet,0,2)
+    canvas.after(50,moveBullet)
 # =====================moveRight=====================
 def moveRight(event):
     global playerX,paused
     paused = False
-    print('Hello')
     if playerX < 670:
         playerX +=50 
     canvas.moveto(player,playerX,playerY)
@@ -111,7 +132,6 @@ def moveRight(event):
 def moveLeft(event):
     global playerX,paused
     paused = False
-    print('Hello')
     if playerX > 5:
         playerX -=10 
     canvas.moveto(player,playerX,playerY)  
@@ -119,7 +139,6 @@ def moveLeft(event):
 def moveUp(event):
     global playerY,paused
     paused = False
-    print('Hello')
     if playerY > 5:
         playerY -=10 
     canvas.moveto(player,playerX,playerY) 
