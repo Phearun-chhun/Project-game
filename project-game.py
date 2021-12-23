@@ -19,7 +19,7 @@ def displaySound():
 # =====================Start Window=====================
 displayHomeBg = True
 displayPlayBg = False
-def displayStart():
+def display():
     global displayHomeBg
     canvas.delete("all")
     if displayHomeBg:
@@ -41,16 +41,16 @@ def displayStart():
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
         canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')
     
-        
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
     displayHomeBg = True        
-    displayStart()
+    display()
+    
 # ===================== Display help player to paly this game --------------
 def exitFromGame(event):
     root.destroy()
-displayStart()
+display()
 
 def gameRull():
     canvas.delete("all")
@@ -59,12 +59,12 @@ def gameRull():
 def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
-    displayStart()
+    display()
 def windowPlay(event):
     global displayPlayBg, displayHomeBg
     displayPlayBg = True
     displayHomeBg = False
-    displayStart()
+    display()
 # =====================display sound=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
