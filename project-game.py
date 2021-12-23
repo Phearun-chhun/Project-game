@@ -12,6 +12,7 @@ bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
+playerImage = ImageTk.PhotoImage(Image.open("image/plane-player2.png"))
 # =====================variable=====================
 x1 = 2
 y1 = 682
@@ -22,7 +23,9 @@ displayPlayBg = False
 listOfEnemies =[]
 moveEnemys = 0
 time = 0
-
+playerX = 310
+playerY = 500
+paused = False
 # =====================sound=====================
 def displaySound():
     winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
@@ -82,16 +85,51 @@ def windowPlay(event):
     displayBackground()
     createEnemy()
     moveEnemy()
+    createPlayer()
 # =====================create enemies=====================
 def createEnemy():
     global enemy
-    enemy = canvas.create_image(random.randrange(10,630),-10,anchor = NW,image=enemyIamge)
-    
+    enemy = canvas.create_image(random.randrange(10,630),-20,anchor = NW,image=enemyIamge)
 # =====================move enemy=====================    
 def moveEnemy():
     global enemy
     canvas.move(enemy,0,2)
     canvas.after(50,moveEnemy)
+# =====================create player=====================
+def createPlayer():
+    global player
+    player = canvas.create_image(300,450,anchor = NW, image= playerImage)
+# =====================moveRight=====================
+def moveRight(event):
+    global playerX,paused
+    paused = False
+    print('Hello')
+    if playerX < 620:
+        playerX +=50 
+    canvas.moveto(player,playerX,playerY)
+# =====================moveLeft===================== 
+def moveLeft(event):
+    global playerX,paused
+    paused = False
+    print('Hello')
+    if playerX > 5:
+        playerX -=10 
+    canvas.moveto(player,playerX,playerY)  
+# =====================moveUp===================== 
+def moveUp(event):
+    global playerY,paused
+    paused = False
+    print('Hello')
+    if playerY > 5:
+        playerY -=10 
+    canvas.moveto(player,playerX,playerY) 
+# =====================moveDown===================== 
+def moveDown(event):
+    global playerY,paused
+    paused = False
+    if playerY <505:
+        playerY +=70 
+    canvas.moveto(player,playerX,playerY) 
 # =====================blood=====================
 def blood():
     global x1, x2,y1,y2
@@ -105,6 +143,10 @@ canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
+root.bind('<f>',moveRight)
+root.bind('<s>',moveLeft)
+root.bind('<e>',moveUp)
+root.bind('<d>',moveDown)
 canvas.pack()
 root.mainloop()
 
