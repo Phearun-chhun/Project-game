@@ -3,34 +3,45 @@ from tkinter import font
 import winsound
 from PIL import ImageTk, Image
 root = Tk()
-root.geometry("800x700")
+root.geometry("800x800")
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=800)
-
 # =====================image and background=====================
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
+bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 
 # =====================sound=====================
+def displaySound():
+    winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+    canvas.after(2000,displaySound)
 
 # =====================Start Window=====================
 displayHomeBg = True
+displayPlayBg = False
 def displayStart():
     global displayHomeBg
     canvas.delete("all")
-    canvas.create_image(0,0, anchor=NW, image = bgStart)
     if displayHomeBg:
+        canvas.create_image(0,0, anchor=NW, image = bgStart)
+        # ===========start===========
         canvas.create_rectangle(300,280,500,330, fill="#09b31d", tags="start", outline="")
         canvas.create_text(400,305, text="Start" ,font=('VNI-Bodon-Poster','25','bold'), fill="white")
+        # ===========Exit===========
         canvas.create_rectangle(300,350,500,400, fill="white", tags="exit", outline="")
         canvas.create_text(400,375, text="Exit" ,font=('VNI-Bodon-Poster','25','bold'),tags='exit')
+        # ===========Help===========
         canvas.create_rectangle(300,420,500,470, fill="white", tags="help", outline="")
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
-        # canvas.after(500,displaySound)
+        winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+    elif displayPlayBg:
+        canvas.create_image(0,0, anchor=NW, image = bgPlay)
     else:
         gameRull()       
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','25','bold'),tags='back')
+        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')
+    
+        
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -39,8 +50,8 @@ def goBack(event):
 # ===================== Display help player to paly this game --------------
 def exitFromGame(event):
     root.destroy()
-
 displayStart()
+
 def gameRull():
     canvas.delete("all")
     canvas.create_image(0,0, anchor=NW, image = bgHelp)
@@ -49,10 +60,13 @@ def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
     displayStart()
+def windowPlay(event):
+    global displayPlayBg, displayHomeBg
+    displayPlayBg = True
+    displayHomeBg = False
+    displayStart()
 # =====================display sound=====================
-def displaySound():
-    winsound.PlaySound("sound/lost.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
-    
+canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
