@@ -47,7 +47,6 @@ def displayBackground():
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,692,text='Score: ',font=('Roboto','22','bold'),fill='white')
-
         blood()
     else:
         gameRule()       
@@ -82,15 +81,17 @@ def windowPlay(event):
     displayHomeBg = False
     displayBackground()
     createEnemy()
+    moveEnemy()
 # =====================create enemies=====================
 def createEnemy():
-    enemy = canvas.create_image(random.randrange(10,630),-30,anchor = NW,image=enemyIamge)
-
+    global enemy
+    enemy = canvas.create_image(random.randrange(10,630),-10,anchor = NW,image=enemyIamge)
+    
 # =====================move enemy=====================    
 def moveEnemy():
-    canvas.move(10,0,createEnemy)
-    canvas.after(1000,createEnemy)
-    createEnemy()
+    global enemy
+    canvas.move(enemy,0,2)
+    canvas.after(50,moveEnemy)
 # =====================blood=====================
 def blood():
     global x1, x2,y1,y2
