@@ -6,10 +6,10 @@ from PIL import ImageTk, Image
 root = Tk()
 root.geometry("800x700")
 root.title("Project Game")
-canvas = Canvas(root, width=800, height=800)
+canvas = Canvas(root, width=800, height=700)
 # =====================image and background=====================
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
-bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
+bgHelp = ImageTk.PhotoImage(Image.open("image/Rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
@@ -73,7 +73,7 @@ def displayHelp(event):
     global displayHomeBg
     displayHomeBg = False
     displayBackground()
-# ==================================Create  text help==================================================================
+# =====================Create  text help=====================
 def createHelp():
     canvas.delete('Exit')
     canvas.delete('Start')
@@ -104,7 +104,7 @@ def moveRight(event):
     global playerX,paused
     paused = False
     print('Hello')
-    if playerX < 620:
+    if playerX < 670:
         playerX +=50 
     canvas.moveto(player,playerX,playerY)
 # =====================moveLeft===================== 
