@@ -34,7 +34,7 @@ def displaySound():
     canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
-    global displayHomeBg
+    global displayHomeBg, displayPlayBg
     canvas.delete("all")
     if displayHomeBg:
         canvas.create_image(0,0, anchor=NW, image = bgStart)
@@ -109,11 +109,6 @@ def moveEnemy():
         canvas.delete(enemies)
     canvas.after(100,moveEnemy)
             
-    # =====================create player=====================
-def createPlayer():
-    global player
-    player = canvas.create_image(300,450,anchor = NW, image= playerImage)
-
     # =====================createBullet=====================
 def createBullet():
     global bullet 
@@ -125,23 +120,26 @@ def moveBullet():
     canvas.move(bullet,0,2)
     canvas.after(50,moveBullet)
 
-
+    # =====================create player=====================
+def createPlayer():
+    global player, playerX, playerY
+    player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
 # Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
     global playerX,paused
     paused = False
     if playerX < 670:
-        playerX +=50 
+        playerX +=10 
     canvas.moveto(player,playerX,playerY)
-# =====================moveLeft===================== 
+    # =====================moveLeft===================== 
 def moveLeft(event):
     global playerX,paused
     paused = False
     if playerX > 5:
         playerX -=10 
     canvas.moveto(player,playerX,playerY)  
-# =====================moveUp===================== 
+    # =====================moveUp===================== 
 def moveUp(event):
     global playerY,paused
     paused = False
@@ -155,6 +153,9 @@ def moveDown(event):
     if playerY <610:
         playerY +=10 
     canvas.moveto(player,playerX,playerY) 
+    
+    
+    
 # =====================blood=====================
 def blood():
     global x1, x2,y1,y2
