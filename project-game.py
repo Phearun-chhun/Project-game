@@ -109,20 +109,25 @@ def moveEnemy():
         canvas.delete(enemies)
     canvas.after(100,moveEnemy)
             
-# =====================create player=====================
+    # =====================create player=====================
 def createPlayer():
     global player
     player = canvas.create_image(300,450,anchor = NW, image= playerImage)
-# =====================createBullet=====================
+
+    # =====================createBullet=====================
 def createBullet():
     global bullet 
     bullet = canvas.create_image(random.randrange(10,630),-10,anchor = NW,image = enemyBullet)
-# =====================moveBullet=====================
+
+    # =====================moveBullet=====================
 def moveBullet():
     global bullet
     canvas.move(bullet,0,2)
     canvas.after(50,moveBullet)
-# =====================moveRight=====================
+
+
+# Move player ==============================
+    # =====================moveRight=====================
 def moveRight(event):
     global playerX,paused
     paused = False
