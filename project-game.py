@@ -18,9 +18,9 @@ playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 enemyBullet = ImageTk.PhotoImage(Image.open("image/enBullet.gif"))
 # =====================variable=====================
 x1 = 2
-y1 = 682
+y1 = 670
 x2 = 42
-y2 = 702
+y2 = 695
 displayHomeBg = True
 displayPlayBg = False
 listOfEnemy  = []
@@ -50,7 +50,7 @@ def displayBackground():
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        canvas.create_text(700,692,text='Score: ',font=('Roboto','22','bold'),fill='white')
+        canvas.create_text(700,685,text='Score: ',font=('Roboto','22','bold'),fill='white')
         blood()
     else:
         gameRule()       
@@ -91,10 +91,10 @@ def windowPlay(event):
     moveBullet()
 # =====================create enemies=====================
 def createEnemy():
-    if len(listOfEnemy) < 5:
-        enemy = canvas.create_image(random.randrange(10,630),-20,anchor = NW,image=enemyIamge)
+    if len(listOfEnemy) < 6:
+        enemy = canvas.create_image(random.randrange(30,650),-50,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
-    canvas.after(100,createEnemy)
+    canvas.after(random.randrange(100,500),createEnemy)
 # =====================move enemy=====================    
 def moveEnemy():
     global listOfEnemy
@@ -102,7 +102,7 @@ def moveEnemy():
     for enemies in listOfEnemy:
         canvas.move(enemies,0,5)
         position  = canvas.coords(enemies)
-        if position[1] > 650 :
+        if position[1] > 620 :
             deleteEnemy.append(enemies)
     for enemies in deleteEnemy:
         listOfEnemy.remove(enemies)
@@ -126,7 +126,7 @@ def moveBullet():
     canvas.after(50,moveBullet)
 
 
-# Move player ==============================
+# =====================Move player =====================
     # =====================moveRight=====================
 def moveRight(event):
     global playerX,paused
