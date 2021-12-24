@@ -15,19 +15,24 @@ bgHelp = ImageTk.PhotoImage(Image.open("image/Rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
-enemyBullet = ImageTk.PhotoImage(Image.open("image/enBullet.gif"))
+playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
+
 # =====================variable=====================
 x1 = 2
 y1 = 670
 x2 = 42
 y2 = 695
+lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
+listBulletOfPlayer = []
 listOfEnemy  = []
 moveEnemys = 0
 playerX = 310
 playerY = 500
 paused = False
+positionXBullet = 0
+positionYBullet = 0
 # =====================sound=====================
 def displaySound():
     winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
@@ -45,9 +50,12 @@ def displayBackground():
         canvas.create_rectangle(300,350,500,400, fill="white", tags="exit", outline="")
         canvas.create_text(400,375, text="Exit" ,font=('VNI-Bodon-Poster','25','bold'),tags='exit')
         # ===========Help===========
+        canvas.create_rectangle(30,30,70,70, fill="red")
+        canvas.create_image(50,50,image=enemyIamge)
         canvas.create_rectangle(300,420,500,470, fill="white", tags="help", outline="")
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,685,text='Score: ',font=('Roboto','22','bold'),fill='white')
@@ -61,8 +69,8 @@ def goBack(event):
     global displayHomeBg
     displayHomeBg = True        
     displayBackground()   
-# ===================== Display help player to paly this game --------------
-def exitFromGame(event):
+# ===================== Display help player to paly this game =====================
+def exitFromGame(event):    
     root.destroy()
 displayBackground()
 # =====================display rule=====================
@@ -87,49 +95,68 @@ def windowPlay(event):
     createEnemy()
     moveEnemy()
     createPlayer()
-    createBullet()
     moveBullet()
+    # createBullet(event)
+
 # =====================create enemies=====================
 def createEnemy():
-    if len(listOfEnemy) < 6:
-        enemy = canvas.create_image(random.randrange(30,650),-50,anchor = NW,image=enemyIamge)
+    if len(listOfEnemy)<8:
+        enemy = canvas.create_image(random.randrange(20,650),-50,anchor = NW,image=enemyIamge)
+
         listOfEnemy.append(enemy)
-    canvas.after(random.randrange(100,500),createEnemy)
+    canvas.after(1000,createEnemy)
 # =====================move enemy=====================    
 def moveEnemy():
     global listOfEnemy
     deleteEnemy = []
     for enemies in listOfEnemy:
-        canvas.move(enemies,0,5)
+        canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
-        if position[1] > 620 :
+        if position[1] > 620:
             deleteEnemy.append(enemies)
     for enemies in deleteEnemy:
         listOfEnemy.remove(enemies)
         canvas.delete(enemies)
     canvas.after(100,moveEnemy)
+
+
             
-    # =====================createBullet=====================
-def createBullet():
-    global bullet 
-    bullet = canvas.create_image(random.randrange(10,630),-10,anchor = NW,image = enemyBullet)
-
-    # =====================moveBullet=====================
-def moveBullet():
-    global bullet
-    canvas.move(bullet,0,2)
-    canvas.after(50,moveBullet)
-
-
-# =====================Move player =====================
     # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
+
+
+#  =====================createBullet=====================
+def createBullet(event):
+    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer
+    bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
+    listBulletOfPlayer.append(bulletOfPlayer)
+#     =====================moveBullet=====================
+def moveBullet():
+    global bulletOfPlayer,listBulletOfPlayer,py
+    delletBulletPlayer = []
+    for bulletOfPlayer in listBulletOfPlayer:
+        canvas.move(bulletOfPlayer,0,-20)
+        position  = canvas.coords(bulletOfPlayer)
+        py = position[1]
+        if position[1] <20 :
+            delletBulletPlayer.append(bulletOfPlayer)
+    for bulletOfPlayer in delletBulletPlayer:
+        if position[1] <0 :           
+            listBulletOfPlayer.remove(bulletOfPlayer)
+            canvas.delete(bulletOfPlayer)
+    canvas.after(50,moveBullet)
+
+
+
+
+
+    
 # Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
-    global playerX,paused
+    global playerX,paused,playerY
     paused = False
     if playerX < 670:
         playerX +=10 
@@ -152,19 +179,20 @@ def moveUp(event):
 def moveDown(event):
     global playerY,paused
     paused = False
-    if playerY <610:
+    if playerY <590:
         playerY +=10 
     canvas.moveto(player,playerX,playerY) 
-    
-    
-    
 # =====================blood=====================
 def blood():
-    global x1, x2,y1,y2
+    global x1, x2,y1,y2, lifeOfPlayer
     for blood in range(5):
-        canvas.create_rectangle(x1,y1,x2,y2,fill='white')
+        if blood >= lifeOfPlayer:
+            canvas.create_rectangle(x1,y1,x2,y2,fill='red')
+        else:
+            canvas.create_rectangle(x1,y1,x2,y2,fill='blue')
         x1 += 40
-        x2 += 40   
+        x2 += 40  
+     
 # =====================display button=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
@@ -175,6 +203,7 @@ root.bind('<f>',moveRight)
 root.bind('<s>',moveLeft)
 root.bind('<e>',moveUp)
 root.bind('<d>',moveDown)
+root.bind('<a>',createBullet)
 canvas.pack()
 root.mainloop()
 
