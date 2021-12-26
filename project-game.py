@@ -95,6 +95,10 @@ def windowPlay(event):
     createPlayer()
     moveBullet()
     # isMeetEnemy()
+peY = 1
+peX = 0
+pbY = 700
+pbX = playerX
 # =====================create enemies=====================
 def createEnemy():
     global enemy
@@ -103,27 +107,16 @@ def createEnemy():
         listOfEnemy.append(enemy)
     canvas.after(700,createEnemy)
 # =====================move enemy=====================  
-pe = 1
-pb = 700
 def moveEnemy():
-    global listOfEnemy, positionXBullet,pe,pb
-    deleteEnemy = []
+    global listOfEnemy, positionXBullet,peY,pbY,peX,pbX
     for enemies in listOfEnemy:
         canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
-        pe = position[1]
-        # if positionYBullet - position[1]>=20: 
-        if position[1] > 700 or (pb - pe <= 20 and pb - pe >= -20):
+        peY = position[1]
+        peX = position[0]
+        if position[1] > 600 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
-            deleteEnemy.append(enemies)
-            # moveBullet()
-            pe = 0
-
-    # for enemies in deleteEnemy:
-    #     listOfEnemy.remove(enemies)
-    #     canvas.delete(enemies)
-
     canvas.after(120,moveEnemy)
 # def enemyToDelet():
 #     if     
@@ -132,26 +125,35 @@ def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
 
+
+
 #  =====================createBullet=====================
 def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
-#     =====================moveBullet=====================
 
+
+#     =====================moveBullet=====================
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer,pe,pb, playerY
+    global bulletOfPlayer,listBulletOfPlayer,peY,pbY,pbX,peX, playerY
     # delletBulletPlayer = []
     for bulletOfPlayer in listBulletOfPlayer:
         canvas.move(bulletOfPlayer,0,-20)
         position  = canvas.coords(bulletOfPlayer)
-        pb = position[1]
-        if position[1] <20 or (pb - pe <= 20 and pb - pe >= -20):
-            print(pb,pe)            
+        pbY = position[1]
+        pbX = position[0]
+        if   ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):          
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
-            pb = 700
-            
+            pbY = 700
+            print('hello')  
+        elif position[1] <20:
+            listBulletOfPlayer.remove(bulletOfPlayer)
+            canvas.delete(bulletOfPlayer)
+            print("Hello")
+            pbY = 700
+            # print('Hi')
             # delletBulletPlayer.append(bulletOfPlayer)
     # for bulletOfPlayer in delletBulletPlayer:
     #     if position[1] <0 :           
@@ -164,6 +166,7 @@ def moveBullet():
 #     global bulletOfPlayer
 #     if  canvas.coords[bulletOfPlayer][1] > canvas.coords[enemy][1]-10 and  canvas.coords[ bulletOfPlayer][1] < canvas.coords[enemy][1]+10 and canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]-10 and  canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]+10:
 #         print('Hi pu plork!')
+
 # ==============================Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
@@ -216,5 +219,3 @@ root.bind('<d>',moveDown)
 root.bind('<space>',createBullet)
 canvas.pack()
 root.mainloop()
-
-

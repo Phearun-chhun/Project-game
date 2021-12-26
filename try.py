@@ -26,9 +26,7 @@ lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
 listBulletOfPlayer = []
-
 listOfEnemy  = []
-py = 0
 moveEnemys = 0
 playerX = 310
 playerY = 500
@@ -52,8 +50,6 @@ def displayBackground():
         canvas.create_rectangle(300,350,500,400, fill="white", tags="exit", outline="")
         canvas.create_text(400,375, text="Exit" ,font=('VNI-Bodon-Poster','25','bold'),tags='exit')
         # ===========Help===========
-        canvas.create_rectangle(30,30,70,70, fill="red")
-        canvas.create_image(50,50,image=enemyIamge)
         canvas.create_rectangle(300,420,500,470, fill="white", tags="help", outline="")
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
@@ -98,64 +94,68 @@ def windowPlay(event):
     moveEnemy()
     createPlayer()
     moveBullet()
-    # createBullet(event)
-
+    # isMeetEnemy()
+peY = 1
+peX = 0
+pbY = 700
+pbX = playerX
 # =====================create enemies=====================
 def createEnemy():
-    if len(listOfEnemy)<8:
-        enemy = canvas.create_image(random.randrange(20,650),-50,anchor = NW,image=enemyIamge)
+    enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
+    canvas.after(700,createEnemy)
 
-        listOfEnemy.append(enemy)
-    canvas.after(1000,createEnemy)
-# =====================move enemy=====================    
+# =====================move enemy=====================  
+a = createEnemy()
 def moveEnemy():
-    global listOfEnemy,py
-    deleteEnemy = []
-    for enemies in listOfEnemy:
-        canvas.move(enemies,0,12)
-        position  = canvas.coords(enemies)
-        if position[1] > 620 or py - position[1]<= 30:
-            deleteEnemy.append(enemies)
-    for enemies in deleteEnemy:
-        listOfEnemy.remove(enemies)
-        canvas.delete(enemies)
-    canvas.after(100,moveEnemy)
+    canvas.move(a)
 
 
-            
+    canvas.after(120,moveEnemy)
+# def enemyToDelet():
+#     if     
     # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
 
 
+
 #  =====================createBullet=====================
 def createBullet(event):
-    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer
+    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
 #     =====================moveBullet=====================
+
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer,py
+    global bulletOfPlayer,listBulletOfPlayer,peY,pbY,pbX,peX, playerY
     delletBulletPlayer = []
     for bulletOfPlayer in listBulletOfPlayer:
         canvas.move(bulletOfPlayer,0,-20)
         position  = canvas.coords(bulletOfPlayer)
-        py = position[1]
-        if position[1] <20 :
+        pbY = position[1]
+        pbX = position[0]
+        print(pbX)
+        if position[1] <20 or ((pbY - peY <= 20 and pbY - peY >= -20)):          
+            # listBulletOfPlayer.remove(bulletOfPlayer)
+            # canvas.delete(bulletOfPlayer)
+            # pbY = 700
+            
             delletBulletPlayer.append(bulletOfPlayer)
     for bulletOfPlayer in delletBulletPlayer:
         if position[1] <0 :           
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
-    canvas.after(50,moveBullet)
+            # pbY = 700
+    canvas.after(50,moveBullet) 
 
+# ==============================is bullet of player meet enemy==============================
+# def isMeetEnemy():
+#     global bulletOfPlayer
+#     if  canvas.coords[bulletOfPlayer][1] > canvas.coords[enemy][1]-10 and  canvas.coords[ bulletOfPlayer][1] < canvas.coords[enemy][1]+10 and canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]-10 and  canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]+10:
+#         print('Hi pu plork!')
 
-
-
-
-    
-# Move player ==============================
+# ==============================Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
     global playerX,paused,playerY
@@ -194,17 +194,16 @@ def blood():
             canvas.create_rectangle(x1,y1,x2,y2,fill='blue')
         x1 += 40
         x2 += 40  
-     
 # =====================display button=====================
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
-root.bind('<f>',moveRight)
-root.bind('<s>',moveLeft)
-root.bind('<e>',moveUp)
+root.bind('<s>',moveRight)
+root.bind('<a>',moveLeft)
+root.bind('<w>',moveUp)
 root.bind('<d>',moveDown)
-root.bind('<a>',createBullet)
+root.bind('<space>',createBullet)
 canvas.pack()
 root.mainloop()
