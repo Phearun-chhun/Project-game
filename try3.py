@@ -94,30 +94,30 @@ def windowPlay(event):
     moveBullet()
     createEnemy()
     moveEnemy()
-    # isMeetEnemy()
-peY = 1
-peX = 0
-pbY = 700
-pbX = playerX
+    root.bind('<s>',moveRight)
+    root.bind('<a>',moveLeft)
+    root.bind('<w>',moveUp)
+    root.bind('<d>',moveDown)
+    root.bind('<space>',createBullet)
+
+
 # =====================create enemies=====================
 def createEnemy():
     global enemy
-    if len(listOfEnemy)<1:
-        enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
-        listOfEnemy.append(enemy)
-    canvas.after(700,createEnemy)
+    enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
+    listOfEnemy.append(enemy)
+    canvas.after(2000,createEnemy)
 # =====================move enemy=====================  
 def moveEnemy():
-    global listOfEnemy, positionXBullet,peY,pbY,peX,pbX
+    global listOfEnemy, positionXBullet
     for enemies in listOfEnemy:
-        canvas.move(enemies,0,12)
+        canvas.move(enemies,0,10)
         position  = canvas.coords(enemies)
-        peY = position[1]
-        peX = position[0]
-        if position[1] > 600 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):
+        if position[1] > 600 :
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
-    canvas.after(120,moveEnemy)
+            print("remove")
+    canvas.after(150,moveEnemy)
 # def enemyToDelet():
 #     if     
     # =====================create player=====================
@@ -130,37 +130,28 @@ def createPlayer():
 #  =====================createBullet=====================
 def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
+
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
-
-
+  
 #     =====================moveBullet=====================
+
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer,peY,pbY,pbX,peX, playerY
-    # delletBulletPlayer = []
+    global bulletOfPlayer,listBulletOfPlayer, playerY
     for bulletOfPlayer in listBulletOfPlayer:
-        canvas.move(bulletOfPlayer,0,-20)
+        canvas.move(bulletOfPlayer,0,-10)
         position  = canvas.coords(bulletOfPlayer)
-        pbY = position[1]
-        pbX = position[0]
-        
-        if position[1] <20 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):          
+        if position[1] <20 :          
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
-            pbY = 700
-            # print('Hi')
-            # delletBulletPlayer.append(bulletOfPlayer)
-    # for bulletOfPlayer in delletBulletPlayer:
-    #     if position[1] <0 :           
-    #         listBulletOfPlayer.remove(bulletOfPlayer)
-    #         canvas.delete(bulletOfPlayer)
     canvas.after(50,moveBullet) 
 
 # ==============================is bullet of player meet enemy==============================
-# def isMeetEnemy():
-#     global bulletOfPlayer
-#     if  canvas.coords[bulletOfPlayer][1] > canvas.coords[enemy][1]-10 and  canvas.coords[ bulletOfPlayer][1] < canvas.coords[enemy][1]+10 and canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]-10 and  canvas.coords[ bulletOfPlayer][0] > canvas.coords[enemy][0]+10:
-#         print('Hi pu plork!')
+def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
+    # global bulletOfPlayer
+    delete = []
+    for playerBullter in listBulletOfPlayer:
+        positionBulletOfPlayer = canvas.coords(bul)
 
 # ==============================Move player ==============================
     # =====================moveRight=====================
@@ -207,10 +198,6 @@ canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
-root.bind('<s>',moveRight)
-root.bind('<a>',moveLeft)
-root.bind('<w>',moveUp)
-root.bind('<d>',moveDown)
-root.bind('<space>',createBullet)
+
 canvas.pack()
 root.mainloop()

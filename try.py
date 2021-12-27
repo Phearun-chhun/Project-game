@@ -97,19 +97,22 @@ def windowPlay(event):
     # isMeetEnemy()
 peY = 1
 peX = 0
-pbY = 700
+pbY = playerY
 pbX = playerX
 # =====================create enemies=====================
 def createEnemy():
-    enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
+    canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
     canvas.after(700,createEnemy)
-
 # =====================move enemy=====================  
-a = createEnemy()
 def moveEnemy():
-    canvas.move(a)
-
-
+    global listOfEnemy, positionXBullet,peY,pbY,peX,pbX
+    # createEnemy()
+    canvas.move(createEnemy,0,12)
+    position  = canvas.coords(createEnemy)
+    print(position)
+    # if position > 600 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):
+    #     listOfEnemy.remove(createEnemy)
+    #     canvas.delete(createEnemy)
     canvas.after(120,moveEnemy)
 # def enemyToDelet():
 #     if     
@@ -118,35 +121,25 @@ def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
 
-
-
 #  =====================createBullet=====================
 def createBullet(event):
-    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
+    global playerX, playerY,listBulletOfPlayer
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
-#     =====================moveBullet=====================
 
+# =====================moveBullet=====================
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer,peY,pbY,pbX,peX, playerY
-    delletBulletPlayer = []
+    global listBulletOfPlayer,peY,pbY,pbX,peX, playerY
     for bulletOfPlayer in listBulletOfPlayer:
         canvas.move(bulletOfPlayer,0,-20)
         position  = canvas.coords(bulletOfPlayer)
         pbY = position[1]
         pbX = position[0]
-        print(pbX)
-        if position[1] <20 or ((pbY - peY <= 20 and pbY - peY >= -20)):          
-            # listBulletOfPlayer.remove(bulletOfPlayer)
-            # canvas.delete(bulletOfPlayer)
-            # pbY = 700
-            
-            delletBulletPlayer.append(bulletOfPlayer)
-    for bulletOfPlayer in delletBulletPlayer:
-        if position[1] <0 :           
+        print(peY-pbY)
+        if position[1] < 20 :          
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
-            # pbY = 700
+            pbY = playerY
     canvas.after(50,moveBullet) 
 
 # ==============================is bullet of player meet enemy==============================
@@ -166,7 +159,7 @@ def moveRight(event):
     # =====================moveLeft===================== 
 def moveLeft(event):
     global playerX,paused
-    paused = False
+    paused = False 
     if playerX > 5:
         playerX -=10 
     canvas.moveto(player,playerX,playerY)  
