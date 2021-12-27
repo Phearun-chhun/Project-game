@@ -22,6 +22,7 @@ x1 = 2
 y1 = 670
 x2 = 42
 y2 = 695
+score = 0
 lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
@@ -56,7 +57,8 @@ def displayBackground():
 
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        canvas.create_text(700,685,text='Score: ',font=('Roboto','22','bold'),fill='white')
+        showScore =canvas.create_text(700,685,text='Score: 00',font=('Roboto','22','bold'),fill='white')
+       
         blood()
     else:
         gameRule()       
@@ -108,7 +110,7 @@ def createEnemy():
     canvas.after(700,createEnemy)
 # =====================move enemy=====================  
 def moveEnemy():
-    global listOfEnemy, positionXBullet,peY,pbY,peX,pbX
+    global listOfEnemy, positionXBullet,peY,pbY,peX,pbX,score
     for enemies in listOfEnemy:
         canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
@@ -117,9 +119,7 @@ def moveEnemy():
         if position[1] > 600 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
-    canvas.after(120,moveEnemy)
-# def enemyToDelet():
-#     if     
+    canvas.after(120,moveEnemy)   
     # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
@@ -143,8 +143,7 @@ def moveBullet():
         position  = canvas.coords(bulletOfPlayer)
         pbY = position[1]
         pbX = position[0]
-        
-        if position[1] <20 or ((pbY - peY <= 50 and pbY - peY >= -50) and (pbX-peX<=55 and pbX-peX>= 0)):          
+        if position[1] <20 :          
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
             pbY = 700

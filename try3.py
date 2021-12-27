@@ -15,13 +15,14 @@ bgHelp = ImageTk.PhotoImage(Image.open("image/Rule.png"))
 bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
-playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
+playerBulletImg = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
 
 # =====================variable=====================
 x1 = 2
 y1 = 670
 x2 = 42
 y2 = 695
+score = 0
 lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
@@ -39,7 +40,7 @@ def displaySound():
     canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
-    global displayHomeBg, displayPlayBg
+    global displayHomeBg, displayPlayBg,showScore
     canvas.delete("all")
     if displayHomeBg:
         canvas.create_image(0,0, anchor=NW, image = bgStart)
@@ -56,7 +57,7 @@ def displayBackground():
 
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        canvas.create_text(700,685,text='Score: ',font=('Roboto','22','bold'),fill='white')
+        showScore =canvas.create_text(700,685,text='Score: 00',font=('Roboto','22','bold'),fill='white')
         blood()
     else:
         gameRule()       
@@ -94,6 +95,7 @@ def windowPlay(event):
     moveBullet()
     createEnemy()
     moveEnemy()
+    bulletMeetEnemy()
     root.bind('<s>',moveRight)
     root.bind('<a>',moveLeft)
     root.bind('<w>',moveUp)
@@ -116,7 +118,7 @@ def moveEnemy():
         if position[1] > 600 :
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
-            print("remove")
+            bulletMeetEnemy()
     canvas.after(150,moveEnemy)
 # def enemyToDelet():
 #     if     
@@ -131,7 +133,7 @@ def createPlayer():
 def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
 
-    bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
+    bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBulletImg,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
   
 #     =====================moveBullet=====================
@@ -150,9 +152,27 @@ def moveBullet():
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
     # global bulletOfPlayer
     delete = []
-    for playerBullter in listBulletOfPlayer:
-        positionBulletOfPlayer = canvas.coords(bul)
-
+    for playerBullet in listBulletOfPlayer:
+        positionBulletOfPlayer = canvas.coords(playerBullet)
+        for enemy in listOfEnemy:
+            positionOfEnemy = canvas.coords(enemy)
+            print('Hi')
+            if (positionBulletOfPlayer[1]<= positionOfEnemy[1]+50) and (((positionBulletOfPlayer[0] >= positionOfEnemy[0]) and (positionBulletOfPlayer[0] <= positionOfEnemy[0]+100)) or ((positionBulletOfPlayer[0]+20 >= positionOfEnemy[0]) and (positionBulletOfPlayer[0]+20 <= positionOfEnemy[0]+55))):
+                delete.append(playerBullet)
+                delete.append(enemy)
+                print('Hello')
+    return delete
+# ==============================check it bullet of player meet enemy==============================
+def bulletMeetEnemy():
+    global score
+    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
+    if len(meetEn) > 0:
+        listBulletOfPlayer.remove(meetEn[0])
+        listOfEnemy.remove(meetEn[1])
+        canvas.delete(meetEn[0])
+        canvas.delete(meetEn[1])
+        score += 1
+        canvas.itemconfig(showScore + "Score:" +str(score))
 # ==============================Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
