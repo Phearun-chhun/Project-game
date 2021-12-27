@@ -18,6 +18,7 @@ playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
 EnemyBullet = ImageTk.PhotoImage(Image.open("image/bullet-enemy (2).png"))
 winner = ImageTk.PhotoImage(Image.open('image/win-game.png'))
+pausedButton = ImageTk.PhotoImage(Image.open('image/button-paused.png'))
 # =====================variable=====================
 x1 = 2
 y1 = 670
@@ -60,8 +61,8 @@ def displayBackground():
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         showScore =canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white')
+        buttonPaused = canvas.create_image(780,20,anchor= NW, image = pausedButton,tags = 'paused')
         moveBullet()
-        # bulletMeetEnemy()
         blood()
     else:
         gameRule()       
@@ -89,6 +90,10 @@ def displayHelp(event):
 def createHelp():
     canvas.delete('Exit')
     canvas.delete('Start')
+# =====================To puased the game =====================
+def toPaused(event):
+    global paused
+    paused = False
 # =====================display new window after click start=====================
 def windowPlay(event):
     global displayPlayBg, displayHomeBg,isEnough
@@ -125,11 +130,13 @@ def moveEnemy():
 def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
+
 #  =====================create bullet of player=====================
 def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
+    winsound.PlaySound('sound\shooting.mp3',winsound.SND_FILENAME | winsound.SND_ASYNC)
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer,isEnough
@@ -138,7 +145,8 @@ def moveBullet():
         position  = canvas.coords(bulletOfPlayer)
         if position[1] <20 :          
             listBulletOfPlayer.remove(bulletOfPlayer)
-            canvas.delete(bulletOfPlayer)
+            canvas.delete(bulletOfPlayer)   
+        
     bulletMeetEnemy()
     # canvas.itemconfig(showScore,text = 'Score: ' + str(score))
     # if score == 5  :
@@ -169,11 +177,20 @@ def bulletMeetEnemy():
         score +=1 
         print(score)
     canvas.itemconfig(showScore,text = 'Score: ' + str(score))
+    if score == 5 and isEnough:
+        canvas.delete('createEmeny')
+        isWinner()
+    # elif 
+# ==============================if player winner ==============================
+def isWinner():
+    global score,isEnough 
     if score == 5  :
-            # canvas.create_image(0,0,anchor = NW , image= winner) 
-            messagebox.showinfo('You are the winner','Contgratulation')
-            isEnough = False
+        canvas.create_image(0,0,anchor = NW , image= winner) 
+        # messagebox.showinfo('You are the winner','Contgratulation')
+        isEnough = False
             # canvas.delete('all')   
+# ==============================if player lost ==============================       
+
 # ==============================Move player ==============================
 # =====================moveRight=====================
 def moveRight(event):
@@ -215,5 +232,6 @@ canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
+canvas.tag_bind('paused',"<Button-1>",toPaused)
 canvas.pack()
 root.mainloop()
