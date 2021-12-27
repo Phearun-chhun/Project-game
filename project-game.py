@@ -163,8 +163,6 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[0])
         canvas.delete(meetEn[1])
         score +=1 
-        print(score)
-
 # ==============================if winner==============================
 def isWinner():
     global isEnough

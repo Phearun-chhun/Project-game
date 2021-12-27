@@ -61,14 +61,12 @@ def displayBackground():
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         showScore =canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white')
         moveBullet()
-        bulletMeetEnemy()
-        
+        # bulletMeetEnemy()
         blood()
     else:
         gameRule()       
-        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
-        isWinner   
+        # canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
+        # canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -142,8 +140,11 @@ def moveBullet():
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
     bulletMeetEnemy()
-    canvas.itemconfig(showScore,text = 'Score: ' + str(score))
+    # canvas.itemconfig(showScore,text = 'Score: ' + str(score))
+    # if score == 5  :
+    #         canvas.create_image(0,0,anchor = NW , image= winner)    
     canvas.after(50,moveBullet) 
+
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
     delete = []
@@ -154,10 +155,11 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
             if ((positionBulletOfPlayer[1]- positionOfEnemy[1]<=20) and (positionBulletOfPlayer[1]- positionOfEnemy[1]<=-20)) and (((positionBulletOfPlayer[0] - positionOfEnemy[0]>=0) and (positionBulletOfPlayer[0] - positionOfEnemy[0]<=60))):
                 delete.append(playerBullet)
                 delete.append(enemy)
+  
     return delete
 # # ==============================check it bullet of player meet enemy==============================
 def bulletMeetEnemy():
-    global score
+    global score, isEnough
     meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
     if len(meetEn) > 0:
         listBulletOfPlayer.remove(meetEn[0])
@@ -166,8 +168,14 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[1])
         score +=1 
         print(score)
+    canvas.itemconfig(showScore,text = 'Score: ' + str(score))
+    if score == 5  :
+            # canvas.create_image(0,0,anchor = NW , image= winner) 
+            messagebox.showinfo('You are the winner','Contgratulation')
+            isEnough = False
+            # canvas.delete('all')   
 # ==============================Move player ==============================
-    # =====================moveRight=====================
+# =====================moveRight=====================
 def moveRight(event):
     global playerX,playerY
     if playerX < 670:
