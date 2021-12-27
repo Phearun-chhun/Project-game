@@ -1,8 +1,7 @@
-from os import TMP_MAX
 from tkinter import *
 from tkinter import font
 import random
-from types import BuiltinFunctionType
+from tkinter import messagebox
 import winsound
 from PIL import ImageTk, Image
 root = Tk()
@@ -18,12 +17,14 @@ enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
 EnemyBullet = ImageTk.PhotoImage(Image.open("image/bullet-enemy (2).png"))
+winner = ImageTk.PhotoImage(Image.open('image/win-game.png'))
 # =====================variable=====================
 x1 = 2
 y1 = 670
 x2 = 42
 y2 = 695
 score = 0
+isEnough = True
 lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
@@ -42,7 +43,7 @@ def displaySound():
     canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
-    global displayHomeBg, displayPlayBg,showScore
+    global displayHomeBg, displayPlayBg,showScore,isEnough
     canvas.delete("all")
     if displayHomeBg:
         canvas.create_image(0,0, anchor=NW, image = bgStart)
@@ -58,14 +59,16 @@ def displayBackground():
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        showScore =canvas.create_text(700,685,text='Score: 00',font=('Roboto','22','bold'),fill='white')
-        if score == 5 :
-            print('win')
+        showScore =canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white')
+        moveBullet()
+        bulletMeetEnemy()
+        
         blood()
     else:
         gameRule()       
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')    
+        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
+        isWinner   
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -90,7 +93,7 @@ def createHelp():
     canvas.delete('Start')
 # =====================display new window after click start=====================
 def windowPlay(event):
-    global displayPlayBg, displayHomeBg
+    global displayPlayBg, displayHomeBg,isEnough
     displayPlayBg = True
     displayHomeBg = False
     displayBackground()
@@ -98,17 +101,11 @@ def windowPlay(event):
     moveBullet()
     createEnemy()
     moveEnemy()
-    # moveBulletOfEnemy()
     root.bind('<s>',moveRight)
     root.bind('<a>',moveLeft)
     root.bind('<w>',moveUp)
     root.bind('<d>',moveDown)
     root.bind('<space>',createBullet) 
-    # root.bind('<Enter>',createBulletOfEnemy)
-peY = 1
-peX = 0
-pbY = 700
-pbX = playerX
 # =====================create enemies=====================
 def createEnemy():
     global enemy
@@ -122,27 +119,10 @@ def moveEnemy():
     for enemies in listOfEnemy:
         canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
-        if position[1] > 600 :
+        if position[1] > 650 :
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
     canvas.after(120,moveEnemy)
-# # =====================create bullet of enemy=====================
-# def createBulletOfEnemy(event):
-#     if len(listOfEnemy) > 0:
-#         # bulletOfEnemy = canvas.create_image(random.randrange(20,650)+20,-10,anchor =NW, image= EnemyBullet)
-#         creator = random.randrange(20,650)
-#         position = canvas.coords(creator)
-#         bulletOfEnemy = canvas.create_image(position[0] + 50, position[1] + 90, anchor=NW, image = EnemyBullet)
-#         listBulletOfEnemy .append(bulletOfEnemy)
-# =====================move bullet of enemy=====================
-# def moveBulletOfEnemy():
-#     toPopEnBullet = []  
-#     for i in range(len( listBulletOfEnemy)):
-#         bullet =  listBulletOfEnemy[i]
-#         bulletPosition = canvas.coords(bullet)
-#         if bulletPosition[1] >= 575:
-#             canvas.delete(bullet)
-#             toPopEnBullet.append(i)
 # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
@@ -154,7 +134,7 @@ def createBullet(event):
     listBulletOfPlayer.append(bulletOfPlayer)
 #     =====================move bullet of player=====================
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer,peY,pbY,pbX,peX, playerY
+    global bulletOfPlayer,listBulletOfPlayer,isEnough
     for bulletOfPlayer in listBulletOfPlayer:
         canvas.move(bulletOfPlayer,0,-20)
         position  = canvas.coords(bulletOfPlayer)
@@ -162,8 +142,8 @@ def moveBullet():
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)
     bulletMeetEnemy()
+    canvas.itemconfig(showScore,text = 'Score: ' + str(score))
     canvas.after(50,moveBullet) 
-
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
     delete = []
@@ -175,7 +155,7 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
                 delete.append(playerBullet)
                 delete.append(enemy)
     return delete
-# ==============================check it bullet of player meet enemy==============================
+# # ==============================check it bullet of player meet enemy==============================
 def bulletMeetEnemy():
     global score
     meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
@@ -189,29 +169,25 @@ def bulletMeetEnemy():
 # ==============================Move player ==============================
     # =====================moveRight=====================
 def moveRight(event):
-    global playerX,paused,playerY
-    paused = False
+    global playerX,playerY
     if playerX < 670:
         playerX +=10 
     canvas.moveto(player,playerX,playerY)
     # =====================moveLeft===================== 
 def moveLeft(event):
-    global playerX,paused
-    paused = False 
+    global playerX 
     if playerX > 5:
         playerX -=10 
     canvas.moveto(player,playerX,playerY)  
     # =====================moveUp===================== 
 def moveUp(event):
-    global playerY,paused
-    paused = False
+    global playerY
     if playerY > 5:
         playerY -=10 
     canvas.moveto(player,playerX,playerY) 
 # =====================moveDown===================== 
 def moveDown(event):
-    global playerY,paused
-    paused = False
+    global playerY
     if playerY <590:
         playerY +=10 
     canvas.moveto(player,playerX,playerY) 
@@ -231,6 +207,5 @@ canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
-
 canvas.pack()
 root.mainloop()
