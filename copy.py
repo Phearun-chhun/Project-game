@@ -18,13 +18,11 @@ enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
 EnemyBullet = ImageTk.PhotoImage(Image.open("image/bullet-enemy (2).png"))
-<<<<<<< HEAD
-=======
 winner = ImageTk.PhotoImage(Image.open('image/win-game.png'))
 pausedButton = ImageTk.PhotoImage(Image.open('image/button-paused.png'))
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
 # =====================variable=====================
 score = 0
+isEnough = True
 lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
@@ -60,7 +58,6 @@ def displayBackground():
     elif displayPlayBg:
         canvas.delete("all")
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-<<<<<<< HEAD
         # canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
@@ -68,16 +65,14 @@ def displayBackground():
         gameRule()       
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
         canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')    
-=======
         showScore =canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white')
         buttonPaused = canvas.create_image(780,20,anchor= NW, image = pausedButton,tags = 'paused')
         moveBullet()
         blood()
-    else:
-        gameRule()       
+    # else:
+    #     gameRule()       
         # canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
         # canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -178,11 +173,8 @@ def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
     bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
     listBulletOfPlayer.append(bulletOfPlayer)
-<<<<<<< HEAD
     winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
-=======
     winsound.PlaySound('sound\shooting.mp3',winsound.SND_FILENAME | winsound.SND_ASYNC)
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer
@@ -194,12 +186,9 @@ def moveBullet():
             canvas.delete(bulletOfPlayer)   
         
     bulletMeetEnemy()
-<<<<<<< HEAD
-=======
     # canvas.itemconfig(showScore,text = 'Score: ' + str(score))
     # if score == 5  :
     #         canvas.create_image(0,0,anchor = NW , image= winner)    
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
     canvas.after(50,moveBullet) 
 
 # ==============================is bullet of player meet enemy==============================
@@ -214,8 +203,6 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
                 delete.append(enemy)
   
     return delete
-<<<<<<< HEAD
-=======
 # # ==============================check it bullet of player meet enemy==============================
 def bulletMeetEnemy():
     global score, isEnough
@@ -227,7 +214,7 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[1])
         score +=1 
         print(score)
-    canvas.itemconfig(showScore,text = 'Score: ' + str(score))
+    # canvas.itemconfig(showScore,text = 'Score: ' + str(score))
     if score == 5 and isEnough:
         canvas.delete('createEmeny')
         isWinner()
@@ -241,7 +228,6 @@ def isWinner():
         isEnough = False
             # canvas.delete('all')   
 # ==============================if player lost ==============================       
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
 
 # ==============================Move player ==============================
 # =====================moveRight=====================
@@ -292,15 +278,12 @@ canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp)
-<<<<<<< HEAD
 root.bind('<s>',moveRight)
 root.bind('<a>',moveLeft)
 root.bind('<w>',moveUp)
 root.bind('<d>',moveDown)
 root.bind('<space>',createBullet) 
 
-=======
 canvas.tag_bind('paused',"<Button-1>",toPaused)
->>>>>>> f914f700bd2447d17f055b79fb48cb775350e55d
 canvas.pack()
 root.mainloop()

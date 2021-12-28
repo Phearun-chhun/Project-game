@@ -4,6 +4,7 @@ from tkinter import font
 import random
 from types import BuiltinFunctionType
 import winsound
+import os
 from PIL import ImageTk, Image
 root = Tk()
 root.geometry("800x700")
@@ -17,8 +18,10 @@ bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
-EnemyBullet = ImageTk.PhotoImage(Image.open("image/bullet-enemy (2).png"))
+lostBg = ImageTk.PhotoImage(Image.open("image/lost.png"))
+
 # =====================variable=====================
+gameProcessing = True
 score = 0
 lifeOfPlayer = 5
 displayHomeBg = True
@@ -96,11 +99,11 @@ def playGame():
     moveBullet()
     createEnemy()
     moveEnemy()
-    # root.bind('<s>',moveRight)
-    # root.bind('<a>',moveLeft)
-    # root.bind('<w>',moveUp)
-    # root.bind('<d>',moveDown)
-    # root.bind('<space>',createBullet) 
+    root.bind('<s>',moveRight)
+    root.bind('<a>',moveLeft)
+    root.bind('<w>',moveUp)
+    root.bind('<d>',moveDown)
+    root.bind('<space>',createBullet) 
 
 def bulletMeetEnemy():
     global score,displayPlayBg
@@ -112,13 +115,6 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[1])
         score +=1 
         scoreOfPlayer()
-# =====================create enemies=====================
-def createEnemy():
-    global enemy
-    if len(listOfEnemy)<5:
-        enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
-        listOfEnemy.append(enemy)
-    canvas.after(2000,createEnemy)
 
 def scoreOfPlayer():
     global score
@@ -126,11 +122,30 @@ def scoreOfPlayer():
     canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
 def lost():
     canvas.delete("all")
-    canvas.destroy()
-    
+    canvas.create_image(0,0, anchor=NW, image = lostBg)
+    canvas.create_rectangle(90,90,300,300,fill="blue",tags="next")
+# To Restart
+def restart(event):
+    root.destroy()
+    os.system('python game.py')
+canvas.tag_bind("next","<Button-1>", restart)
+
+# =====================create enemies=====================
+# create enemy==================================
+
+def createEnemy():
+    global enemy, gameProcessing
+    if len(listOfEnemy)<5:
+        enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
+        listOfEnemy.append(enemy)
+    if gameProcessing:
+        canvas.after(2000,createEnemy)
+    else:
+        lost()
 # =====================move enemy=====================  
+
 def moveEnemy():
-    global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score 
+    global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score ,gameProcessing
     for enemies in listOfEnemy:
         canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
@@ -145,19 +160,22 @@ def moveEnemy():
             lifeOfPlayer -= 1
             blood()   
             if lifeOfPlayer == 0:
-                lost()
-    canvas.after(150,moveEnemy)
-    
+                gameProcessing = False
+    if gameProcessing:
+        canvas.after(150,moveEnemy)
+    else:
+        lost()
 # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
     player = canvas.create_image(playerX,playerY,anchor = NW, image= playerImage)
 #  =====================create bullet of player=====================
 def createBullet(event):
-    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer
-    bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
-    listBulletOfPlayer.append(bulletOfPlayer)
-    winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+    global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
+    if gameProcessing:
+        bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
+        listBulletOfPlayer.append(bulletOfPlayer)
+        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer
@@ -230,12 +248,7 @@ canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
-canvas.tag_bind("help", "<Button-1>", displayHelp)
-root.bind('<s>',moveRight)
-root.bind('<a>',moveLeft)
-root.bind('<w>',moveUp)
-root.bind('<d>',moveDown)
-root.bind('<space>',createBullet) 
+canvas.tag_bind("help", "<Button-1>", displayHelp) 
 
 canvas.pack()
 root.mainloop()
