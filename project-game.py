@@ -1,6 +1,8 @@
+from os import TMP_MAX
 from tkinter import *
 from tkinter import font
 import random
+from types import BuiltinFunctionType
 import winsound
 import os
 from PIL import ImageTk, Image
@@ -112,7 +114,7 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[0])
         canvas.delete(meetEn[1])
         score +=1 
-        if score == 100:
+        if score == 10:
             gameProcessing = False
             gameWin = True
         scoreOfPlayer()
@@ -128,7 +130,9 @@ def finishGame():
     canvas.delete("all")
     if gameWin:
         canvas.create_image(0,0, anchor=NW, image = winBg)
+        winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     else:
+        winsound.PlaySound('sound\lost.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
         canvas.create_image(0,0, anchor=NW, image = lostBg)
 
         
@@ -136,7 +140,7 @@ def finishGame():
 # create enemy==================================
 def createEnemy():
     global enemy, gameProcessing, score
-    if len(listOfEnemy)<5:
+    if len(listOfEnemy)<5 and gameProcessing:
         enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
     if gameProcessing and score < 45:
@@ -150,24 +154,27 @@ def createEnemy():
 # =====================move enemy=====================  
 
 def moveEnemy():
-    global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score ,gameProcessing, score
-    for enemies in listOfEnemy:
-        canvas.move(enemies,0,12)
-        position  = canvas.coords(enemies)
-        if position[1] > 600  :
-            listOfEnemy.remove(enemies)
-            canvas.delete(enemies)
-            lifeOfPlayer -= 1
-            if lifeOfPlayer == 0:
-                gameProcessing = False
-            blood()
-        elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50)):
-            listOfEnemy.remove(enemies)
-            canvas.delete(enemies)
-            lifeOfPlayer -= 1
-            if lifeOfPlayer == 0:
-                gameProcessing = False
-            blood()   
+    global listOfEnemy,playerX,playerY, lifeOfPlayer ,gameProcessing
+    if gameProcessing:
+        for enemies in listOfEnemy:
+            canvas.move(enemies,0,12)
+            position  = canvas.coords(enemies)
+            if position[1] > 600:
+                listOfEnemy.remove(enemies)
+                canvas.delete(enemies)
+                lifeOfPlayer -= 1
+                winsound.PlaySound('sound\low_flood.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+                if lifeOfPlayer == 0:
+                    gameProcessing = False
+                blood()  
+            elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50))  :
+                listOfEnemy.remove(enemies)
+                canvas.delete(enemies)
+                lifeOfPlayer -= 1
+                winsound.PlaySound('sound\low_flood.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+                if lifeOfPlayer == 0:
+                    gameProcessing = False
+                blood()  
     if gameProcessing:
         canvas.after(150,moveEnemy)
     else:
@@ -181,7 +188,9 @@ def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
     if gameProcessing:
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
-        listBulletOfPlayer.append(bulletOfPlayer)        
+        listBulletOfPlayer.append(bulletOfPlayer)  
+        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+              
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin

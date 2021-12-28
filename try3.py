@@ -11,6 +11,8 @@ root.geometry("800x700")
 root.resizable(False,False)
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=700)
+
+
 # =====================image and background=====================
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/Rule.png"))
@@ -18,8 +20,8 @@ bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
-lostBg = ImageTk.PhotoImage(Image.open("image/lost.png"))
-winBg = ImageTk.PhotoImage(Image.open("image/win-game.png"))
+lostBg = ImageTk.PhotoImage(Image.open("image/Game over.png"))
+winBg = ImageTk.PhotoImage(Image.open("image/you win.png"))
 
 # =====================variable=====================
 gameProcessing = True
@@ -37,10 +39,7 @@ playerY = 500
 paused = False
 positionXBullet = 0
 positionYBullet = 0
-# =====================sound=====================
-def displaySound():
-    winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
-    canvas.after(2000,displaySound)
+
 # =====================Start Window=====================
 def displayBackground():
     global displayHomeBg, displayPlayBg, score
@@ -58,12 +57,14 @@ def displayBackground():
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
-        canvas.delete("all")
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
-        
+    else:
+        gameRule()
+        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
+        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -92,8 +93,8 @@ def windowPlay(event):
     displayPlayBg = True
     displayHomeBg = False
     displayBackground()
+    
 def playGame():
-    global score
     createPlayer()
     moveBullet()
     createEnemy()
@@ -106,23 +107,22 @@ def playGame():
 
 def bulletMeetEnemy():
     global score,displayPlayBg, gameProcessing,gameWin
-    if not gameWin:
-        meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-        if len(meetEn) > 0:
-            listBulletOfPlayer.remove(meetEn[0])
-            listOfEnemy.remove(meetEn[1])
-            canvas.delete(meetEn[0])
-            canvas.delete(meetEn[1])
-            score +=1 
-            if score >70:
-                gameProcessing = False
-                gameWin = True
+    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
+    if len(meetEn) > 0 and not gameWin:
+        listBulletOfPlayer.remove(meetEn[0])
+        listOfEnemy.remove(meetEn[1])
+        canvas.delete(meetEn[0])
+        canvas.delete(meetEn[1])
+        score +=1 
+        if score == 10:
+            gameProcessing = False
+            gameWin = True
         scoreOfPlayer()
 
 def scoreOfPlayer():
     global score
     canvas.delete("myScore")
-    canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
+    canvas.create_text(700,685,text='Score: '+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
 
 # Game Lost and Win
 def finishGame():
@@ -130,47 +130,51 @@ def finishGame():
     canvas.delete("all")
     if gameWin:
         canvas.create_image(0,0, anchor=NW, image = winBg)
+        winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     else:
+        winsound.PlaySound('sound\lost.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
         canvas.create_image(0,0, anchor=NW, image = lostBg)
-        canvas.create_rectangle(90,90,300,300,fill="blue",tags="next")
+
         
     
-# To Restart
-def restart(event):
-    root.destroy()
-    os.system('Project-game.py')
-canvas.tag_bind("next","<Button-1>", windowPlay)
-
-# =====================create enemies=====================
 # create enemy==================================
-
 def createEnemy():
-    global enemy, gameProcessing
-    if len(listOfEnemy)<5:
+    global enemy, gameProcessing, score
+    if len(listOfEnemy)<5 and gameProcessing:
         enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
-    if gameProcessing:
-        canvas.after(2000,createEnemy)
+    if gameProcessing and score < 45:
+        canvas.after(200,createEnemy)
+    elif gameProcessing and score < 75:
+        canvas.after(1500,createEnemy)
+    elif gameProcessing:
+        canvas.after(1000,createEnemy)
     else:
         finishGame()
 # =====================move enemy=====================  
 
 def moveEnemy():
-    global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score ,gameProcessing
-    for enemies in listOfEnemy:
-        canvas.move(enemies,0,12)
-        position  = canvas.coords(enemies)
-        if position[1] > 600  :
-            listOfEnemy.remove(enemies)
-            canvas.delete(enemies)
-            lifeOfPlayer -= 1
-        elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50)):
-            listOfEnemy.remove(enemies)
-            canvas.delete(enemies)
-            lifeOfPlayer -= 1
-        blood()   
-        if lifeOfPlayer == 0:
-            gameProcessing = False
+    global listOfEnemy,playerX,playerY, lifeOfPlayer ,gameProcessing
+    if gameProcessing:
+        for enemies in listOfEnemy:
+            canvas.move(enemies,0,12)
+            position  = canvas.coords(enemies)
+            if position[1] > 600:
+                listOfEnemy.remove(enemies)
+                canvas.delete(enemies)
+                lifeOfPlayer -= 1
+                winsound.PlaySound('sound\low_flood.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+                if lifeOfPlayer == 0:
+                    gameProcessing = False
+                blood()  
+            elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50))  :
+                listOfEnemy.remove(enemies)
+                canvas.delete(enemies)
+                lifeOfPlayer -= 1
+                winsound.PlaySound('sound\low_flood.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+                if lifeOfPlayer == 0:
+                    gameProcessing = False
+                blood()  
     if gameProcessing:
         canvas.after(150,moveEnemy)
     else:
@@ -184,8 +188,9 @@ def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
     if gameProcessing:
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
-        listBulletOfPlayer.append(bulletOfPlayer)
-        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+        listBulletOfPlayer.append(bulletOfPlayer)  
+        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+              
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin
@@ -209,6 +214,7 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
             if ((positionBulletOfPlayer[1]- positionOfEnemy[1]<=10) and (positionBulletOfPlayer[1]- positionOfEnemy[1]>= -10)) and (((positionBulletOfPlayer[0] - positionOfEnemy[0]>=0) and (positionBulletOfPlayer[0] - positionOfEnemy[0]<=60))):
                 delete.append(playerBullet)
                 delete.append(enemy)
+                winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     return delete
 
 # ==============================Move player ==============================
