@@ -63,8 +63,8 @@ def displayBackground():
         blood()
     else:
         gameRule()
-        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
+        
+        
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -78,6 +78,10 @@ displayBackground()
 def gameRule():
     canvas.delete("all")
     canvas.create_image(0,0, anchor=NW, image = bgHelp)
+    winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+    canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
+    canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
+
 # =====================click help=====================
 def displayHelp(event):
     global displayHomeBg
@@ -96,15 +100,16 @@ def windowPlay(event):
     
 def playGame():
     createPlayer()
-    moveBullet()
     createEnemy()
     moveEnemy()
+    moveBullet()
     root.bind('<s>',moveRight)
     root.bind('<a>',moveLeft)
     root.bind('<w>',moveUp)
     root.bind('<d>',moveDown)
     root.bind('<space>',createBullet) 
 
+# To remove the enemies==========================
 def bulletMeetEnemy():
     global score,displayPlayBg, gameProcessing,gameWin
     meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
@@ -114,29 +119,54 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[0])
         canvas.delete(meetEn[1])
         score +=1 
-        if score == 10:
+        if score == 5:
             gameProcessing = False
             gameWin = True
         scoreOfPlayer()
-
+        
+# Display Score =======================
 def scoreOfPlayer():
     global score
     canvas.delete("myScore")
     canvas.create_text(700,685,text='Score: '+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
 
+def backHome(event):
+    global gameProcessing, displayHomeBg, gameWin,displayPlayBg, score,listOfEnemy,listBulletOfPlayer, lifeOfPlayer
+    canvas.delete("all")
+    lifeOfPlayer = 5
+    listBulletOfPlayer = []
+    listOfEnemy = []
+    score = 0
+    gameWin = False
+    gameProcessing = True
+    displayHomeBg = True
+    displayPlayBg = False
+    displayBackground()
+def playAgain(event):
+    global gameProcessing, displayHomeBg, gameWin,displayPlayBg, score,listOfEnemy,listBulletOfPlayer, lifeOfPlayer
+    canvas.delete("all")
+    lifeOfPlayer = 5
+    listBulletOfPlayer = []
+    listOfEnemy = []
+    score = 0
+    gameWin = False
+    gameProcessing = True
+    displayBackground()
 # Game Lost and Win
 def finishGame():
     global gameWin
     canvas.delete("all")
     if gameWin:
         canvas.create_image(0,0, anchor=NW, image = winBg)
+        canvas.create_text(380,360,text='Your Score: '+str(score),font=('Roboto','32','bold'),fill='white',tags="myScore")
         winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
+        canvas.create_text(80,40,text='BACK',font=('Roboto','32','bold'),fill="white" ,tags="restart")
+
     else:
         winsound.PlaySound('sound\lost.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
         canvas.create_image(0,0, anchor=NW, image = lostBg)
-
-        
-    
+        canvas.create_text(80,40,text='BACK',font=('Roboto','32','bold'),fill="white" ,tags="restart")
+        canvas.create_text(680,40,text='AGAIN',font=('Roboto','32','bold'),fill="white" ,tags="replay")
 # create enemy==================================
 def createEnemy():
     global enemy, gameProcessing, score
@@ -204,6 +234,11 @@ def moveBullet():
         bulletMeetEnemy()
         canvas.after(50,moveBullet) 
 
+
+
+
+
+
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
     delete = []
@@ -216,6 +251,23 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
                 delete.append(enemy)
                 winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     return delete
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ==============================Move player ==============================
     # =====================moveRight=====================
@@ -261,11 +313,12 @@ def blood():
         x1 += 40
         x2 += 40  
 # =====================display button=====================
+canvas.tag_bind("restart", "<Button-1>", backHome)
+canvas.tag_bind("replay", "<Button-1>", playAgain)
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
 canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp) 
-
 canvas.pack()
 root.mainloop()
