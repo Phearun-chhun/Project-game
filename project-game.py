@@ -33,7 +33,6 @@ listBulletOfEnemy = []
 moveEnemys = 0
 playerX = 310
 playerY = 500
-paused = False
 positionXBullet = 0
 positionYBullet = 0
 # =====================Start Window=====================
@@ -54,7 +53,7 @@ def displayBackground():
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
+        canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
     else:
@@ -196,9 +195,9 @@ def createPlayer():
 def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
     if gameProcessing:
+        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)           
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
         listBulletOfPlayer.append(bulletOfPlayer)  
-        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)           
 #   =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin
@@ -233,36 +232,32 @@ def bulletMeetEnemy():
         canvas.delete(meetEn[0])
         canvas.delete(meetEn[1])
         score +=1 
-        if score == 50:
+        if score == 15:
             gameProcessing = False
             gameWin = True
         scoreOfPlayer()      
 # ==============================Move player ==============================
 # =====================moveRight=====================
 def moveRight(event):
-    global playerX,paused,playerY
-    paused = False
+    global playerX,playerY
     if playerX < 670:
         playerX +=20 
     canvas.moveto(player,playerX,playerY)
     # =====================moveLeft===================== 
 def moveLeft(event):
-    global playerX,paused
-    paused = False 
+    global playerX 
     if playerX > 5:
         playerX -=20 
     canvas.moveto(player,playerX,playerY)  
     # =====================moveUp===================== 
 def moveUp(event):
-    global playerY,paused
-    paused = False
+    global playerY
     if playerY > 5:
         playerY -=20 
     canvas.moveto(player,playerX,playerY) 
     # =====================moveDown===================== 
 def moveDown(event):
-    global playerY,paused
-    paused = False
+    global playerY
     if playerY <590:
         playerY +=20 
     canvas.moveto(player,playerX,playerY) 
