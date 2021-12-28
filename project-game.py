@@ -93,8 +93,8 @@ def windowPlay(event):
     displayPlayBg = True
     displayHomeBg = False
     displayBackground()
+    
 def playGame():
-    global score
     createPlayer()
     moveBullet()
     createEnemy()
