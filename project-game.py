@@ -101,35 +101,6 @@ def playGame():
     root.bind('<w>',moveUp)
     root.bind('<d>',moveDown)
     root.bind('<space>',createBullet) 
-# ==========================To remove the enemies==========================
-def bulletMeetEnemy():
-    global score,displayPlayBg, gameProcessing,gameWin
-    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-    if len(meetEn) > 0 and not gameWin:
-        listBulletOfPlayer.remove(meetEn[0])
-        listOfEnemy.remove(meetEn[1])
-        canvas.delete(meetEn[0])
-        canvas.delete(meetEn[1])
-        score +=1 
-        if score == 50:
-            gameProcessing = False
-            gameWin = True
-        scoreOfPlayer()
-# ==========================To remove the enemies==========================
-def bulletMeetEnemy():
-    global score,displayPlayBg, gameProcessing,gameWin
-    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-    if len(meetEn) > 0 and not gameWin:
-        listBulletOfPlayer.remove(meetEn[0])
-        listOfEnemy.remove(meetEn[1])
-        canvas.delete(meetEn[0])
-        canvas.delete(meetEn[1])
-        score +=1 
-        if score == 50:
-            gameProcessing = False
-            gameWin = True
-        scoreOfPlayer()
-        
 # ==========================Display Score =======================
 def scoreOfPlayer():
     global score
@@ -265,7 +236,7 @@ def bulletMeetEnemy():
         if score == 50:
             gameProcessing = False
             gameWin = True
-        scoreOfPlayer()
+        scoreOfPlayer()      
 # ==============================Move player ==============================
 # =====================moveRight=====================
 def moveRight(event):
