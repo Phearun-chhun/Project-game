@@ -1,10 +1,7 @@
-from os import TMP_MAX
 from tkinter import *
 from tkinter import font
 import random
-from types import BuiltinFunctionType
 import winsound
-import os
 from PIL import ImageTk, Image
 root = Tk()
 root.geometry("800x700")
