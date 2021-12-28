@@ -17,9 +17,7 @@ bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
-EnemyBullet = ImageTk.PhotoImage(Image.open("image/bullet-enemy (2).png"))
-winner = ImageTk.PhotoImage(Image.open('image/win-game.png'))
-pausedButton = ImageTk.PhotoImage(Image.open('image/button-paused.png'))
+winner = ImageTk.PhotoImage(Image.open('image/you win.png'))
 # =====================variable=====================
 score = 0
 isEnough = True
@@ -66,7 +64,6 @@ def displayBackground():
         canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
         canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')    
         showScore =canvas.create_text(700,685,text='Score: 0'+str(score),font=('Roboto','22','bold'),fill='white')
-        buttonPaused = canvas.create_image(780,20,anchor= NW, image = pausedButton,tags = 'paused')
         moveBullet()
         blood()
     # else:
@@ -184,7 +181,6 @@ def moveBullet():
         if position[1] <20 :          
             listBulletOfPlayer.remove(bulletOfPlayer)
             canvas.delete(bulletOfPlayer)   
-        
     bulletMeetEnemy()
     # canvas.itemconfig(showScore,text = 'Score: ' + str(score))
     # if score == 5  :
