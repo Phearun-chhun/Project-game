@@ -158,15 +158,17 @@ def finishGame():
     canvas.delete("all")
     if gameWin:
         canvas.create_image(0,0, anchor=NW, image = winBg)
-        canvas.create_text(380,360,text='Your Score: '+str(score),font=('Roboto','32','bold'),fill='white',tags="myScore")
-        winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
-        canvas.create_text(80,40,text='BACK',font=('Roboto','32','bold'),fill="white" ,tags="restart")
-
+        canvas.create_text(390,380,text='Your Score: '+str(score),font=('Roboto','32','bold'),fill='white',tags="myScore")
+        winsound.PlaySound('sound\win.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+        canvas.create_rectangle(320,430,480,490,fill='white',tags='restart' )
+        canvas.create_text(400,460,text='Back',font=('Roboto','32','bold'),fill="black" ,tags="restart")        
     else:
         winsound.PlaySound('sound\lost.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
         canvas.create_image(0,0, anchor=NW, image = lostBg)
-        canvas.create_text(80,40,text='BACK',font=('Roboto','32','bold'),fill="white" ,tags="restart")
-        canvas.create_text(680,40,text='AGAIN',font=('Roboto','32','bold'),fill="white" ,tags="replay")
+        canvas.create_rectangle(110,415,290,475,fill='white',tags='restart' )
+        canvas.create_text(200,450,text='BACK',font=('Roboto','32','bold'),fill="black" ,tags="restart")
+        canvas.create_rectangle(510,415,690,475,fill='white',tags='restart' )
+        canvas.create_text(600,450,text='AGAIN',font=('Roboto','32','bold'),fill="black" ,tags="replay")
 # create enemy==================================
 def createEnemy():
     global enemy, gameProcessing, score
@@ -174,15 +176,14 @@ def createEnemy():
         enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
     if gameProcessing and score < 45:
-        canvas.after(200,createEnemy)
+        canvas.after(1000,createEnemy)
     elif gameProcessing and score < 75:
-        canvas.after(1500,createEnemy)
+        canvas.after(1000,createEnemy)
     elif gameProcessing:
         canvas.after(1000,createEnemy)
     else:
         finishGame()
 # =====================move enemy=====================  
-
 def moveEnemy():
     global listOfEnemy,playerX,playerY, lifeOfPlayer ,gameProcessing
     if gameProcessing:
@@ -233,12 +234,6 @@ def moveBullet():
                 canvas.delete(bulletOfPlayer)
         bulletMeetEnemy()
         canvas.after(50,moveBullet) 
-
-
-
-
-
-
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
     delete = []
@@ -251,26 +246,8 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
                 delete.append(enemy)
                 winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     return delete
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ==============================Move player ==============================
-    # =====================moveRight=====================
+# =====================moveRight=====================
 def moveRight(event):
     global playerX,paused,playerY
     paused = False
