@@ -19,10 +19,12 @@ enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
 lostBg = ImageTk.PhotoImage(Image.open("image/lost.png"))
+winBg = ImageTk.PhotoImage(Image.open("image/win-game.png"))
 
 # =====================variable=====================
 gameProcessing = True
 score = 0
+gameWin = False
 lifeOfPlayer = 5
 displayHomeBg = True
 displayPlayBg = False
@@ -58,13 +60,10 @@ def displayBackground():
     elif displayPlayBg:
         canvas.delete("all")
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
-        # canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
+        canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
-    else:
-        gameRule()       
-        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back')    
+        
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -106,29 +105,41 @@ def playGame():
     root.bind('<space>',createBullet) 
 
 def bulletMeetEnemy():
-    global score,displayPlayBg
-    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-    if len(meetEn) > 0:
-        listBulletOfPlayer.remove(meetEn[0])
-        listOfEnemy.remove(meetEn[1])
-        canvas.delete(meetEn[0])
-        canvas.delete(meetEn[1])
-        score +=1 
+    global score,displayPlayBg, gameProcessing,gameWin
+    if not gameWin:
+        meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
+        if len(meetEn) > 0:
+            listBulletOfPlayer.remove(meetEn[0])
+            listOfEnemy.remove(meetEn[1])
+            canvas.delete(meetEn[0])
+            canvas.delete(meetEn[1])
+            score +=1 
+            if score >3:
+                gameProcessing = False
+                gameWin = True
         scoreOfPlayer()
 
 def scoreOfPlayer():
     global score
     canvas.delete("myScore")
     canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
-def lost():
+
+# Game Lost and Win
+def finishGame():
+    global gameWin
     canvas.delete("all")
-    canvas.create_image(0,0, anchor=NW, image = lostBg)
-    canvas.create_rectangle(90,90,300,300,fill="blue",tags="next")
+    if gameWin:
+        canvas.create_image(0,0, anchor=NW, image = winBg)
+    else:
+        canvas.create_image(0,0, anchor=NW, image = lostBg)
+        canvas.create_rectangle(90,90,300,300,fill="blue",tags="next")
+        
+    
 # To Restart
 def restart(event):
     root.destroy()
-    os.system('python game.py')
-canvas.tag_bind("next","<Button-1>", restart)
+    os.system('Project-game.py')
+canvas.tag_bind("next","<Button-1>", windowPlay)
 
 # =====================create enemies=====================
 # create enemy==================================
@@ -141,7 +152,7 @@ def createEnemy():
     if gameProcessing:
         canvas.after(2000,createEnemy)
     else:
-        lost()
+        finishGame()
 # =====================move enemy=====================  
 
 def moveEnemy():
@@ -152,19 +163,18 @@ def moveEnemy():
         if position[1] > 600  :
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
-            score -= 1
-            scoreOfPlayer()
+            lifeOfPlayer -= 1
         elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50)):
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
             lifeOfPlayer -= 1
-            blood()   
-            if lifeOfPlayer == 0:
-                gameProcessing = False
+        blood()   
+        if lifeOfPlayer == 0:
+            gameProcessing = False
     if gameProcessing:
         canvas.after(150,moveEnemy)
     else:
-        lost()
+        finishGame()
 # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
@@ -178,15 +188,16 @@ def createBullet(event):
         winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
 #     =====================move bullet of player=====================
 def moveBullet():
-    global bulletOfPlayer,listBulletOfPlayer
-    for bulletOfPlayer in listBulletOfPlayer:
-        canvas.move(bulletOfPlayer,0,-20)
-        position  = canvas.coords(bulletOfPlayer)
-        if position[1] <20 :          
-            listBulletOfPlayer.remove(bulletOfPlayer)
-            canvas.delete(bulletOfPlayer)
-    bulletMeetEnemy()
-    canvas.after(50,moveBullet) 
+    global bulletOfPlayer,listBulletOfPlayer, gameWin
+    if not gameWin:
+        for bulletOfPlayer in listBulletOfPlayer:
+            canvas.move(bulletOfPlayer,0,-20)
+            position  = canvas.coords(bulletOfPlayer)
+            if position[1] <20 :          
+                listBulletOfPlayer.remove(bulletOfPlayer)
+                canvas.delete(bulletOfPlayer)
+        bulletMeetEnemy()
+        canvas.after(50,moveBullet) 
 
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
