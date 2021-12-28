@@ -114,7 +114,7 @@ def bulletMeetEnemy():
             canvas.delete(meetEn[0])
             canvas.delete(meetEn[1])
             score +=1 
-            if score >3:
+            if score >70:
                 gameProcessing = False
                 gameWin = True
         scoreOfPlayer()

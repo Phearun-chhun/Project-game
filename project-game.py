@@ -61,15 +61,14 @@ def displayBackground():
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
-        canvas.delete("all")
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
     else:
-        canvas.delete("all")
         gameRule()
-        
+        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
+        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -112,18 +111,17 @@ def playGame():
 
 def bulletMeetEnemy():
     global score,displayPlayBg, gameProcessing,gameWin
-    if not gameWin:
-        meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-        if len(meetEn) > 0:
-            listBulletOfPlayer.remove(meetEn[0])
-            listOfEnemy.remove(meetEn[1])
-            canvas.delete(meetEn[0])
-            canvas.delete(meetEn[1])
-            score +=1 
-            if score >10:
-                gameProcessing = False
-                gameWin = True
-        scoreOfPlayer()
+    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
+    if len(meetEn) > 0 and not gameWin:
+        listBulletOfPlayer.remove(meetEn[0])
+        listOfEnemy.remove(meetEn[1])
+        canvas.delete(meetEn[0])
+        canvas.delete(meetEn[1])
+        score +=1 
+        if score == 100:
+            gameProcessing = False
+            gameWin = True
+    scoreOfPlayer()
 
 def scoreOfPlayer():
     global score
@@ -138,25 +136,21 @@ def finishGame():
         canvas.create_image(0,0, anchor=NW, image = winBg)
     else:
         canvas.create_image(0,0, anchor=NW, image = lostBg)
-        canvas.create_rectangle(90,90,300,300,fill="blue",tags="next")
+
         
     
-# To Restart
-def restart(event):
-    root.destroy()
-    os.system('Project-game.py')
-canvas.tag_bind("next","<Button-1>", windowPlay)
-
-# =====================create enemies=====================
 # create enemy==================================
-
 def createEnemy():
-    global enemy, gameProcessing
+    global enemy, gameProcessing, score
     if len(listOfEnemy)<5:
         enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
-    if gameProcessing:
-        canvas.after(2000,createEnemy)
+    if gameProcessing and score < 45:
+        canvas.after(200,createEnemy)
+    elif gameProcessing and score < 75:
+        canvas.after(1500,createEnemy)
+    elif gameProcessing:
+        canvas.after(1000,createEnemy)
     else:
         finishGame()
 # =====================move enemy=====================  
@@ -174,13 +168,11 @@ def moveEnemy():
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
             lifeOfPlayer -= 1
-        blood()   
-        if lifeOfPlayer == 0:
-            gameProcessing = False
-    if gameProcessing and score<3:
+            if lifeOfPlayer == 0:
+                gameProcessing = False
+            blood()   
+    if gameProcessing:
         canvas.after(150,moveEnemy)
-    elif gameProcessing:
-        canvas.after(100,moveEnemy)
     else:
         finishGame()
 # =====================create player=====================
@@ -193,7 +185,6 @@ def createBullet(event):
     if gameProcessing:
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
         listBulletOfPlayer.append(bulletOfPlayer)
-        winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin
