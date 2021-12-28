@@ -9,8 +9,6 @@ root.geometry("800x700")
 root.resizable(False,False)
 root.title("Project Game")
 canvas = Canvas(root, width=800, height=700)
-
-
 # =====================image and background=====================
 bgStart = ImageTk.PhotoImage(Image.open("image/bg-start.png"))
 bgHelp = ImageTk.PhotoImage(Image.open("image/rule.png"))
@@ -18,13 +16,8 @@ bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
-<<<<<<< HEAD
 lostBg = ImageTk.PhotoImage(Image.open("image/Game over.png"))
 winBg = ImageTk.PhotoImage(Image.open("image/you win.png"))
-=======
-lostBg = ImageTk.PhotoImage(Image.open("image/lost.png"))
-winBg = ImageTk.PhotoImage(Image.open("image/win-game.png"))
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 
 # =====================variable=====================
 gameProcessing = True
@@ -41,7 +34,10 @@ playerX = 310
 playerY = 500
 positionXBullet = 0
 positionYBullet = 0
-
+# =====================sound=====================
+def displaySound():
+    winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
+    canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
     global displayHomeBg, displayPlayBg, score
@@ -59,21 +55,16 @@ def displayBackground():
         canvas.create_text(400,444, text="Help" ,font=('VNI-Bodon-Poster','25','bold'),tags='help')
         winsound.PlaySound('sound\start-game.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
     elif displayPlayBg:
+        canvas.delete("all")
         canvas.create_image(0,0, anchor=NW, image = bgPlay)
         canvas.create_text(700,685,text='Score: 00'+str(score),font=('Roboto','22','bold'),fill='white',tags="myScore")
         playGame()
         blood()
     else:
-<<<<<<< HEAD
         canvas.delete('all')
         gameRule()
         canvas.create_rectangle(325,600,475,650, fill="white", tags="help", outline="")
         canvas.create_text(400,625,text='BACK',font=('Roboto','23','bold'),tags='back')
-=======
-        gameRule()
-        canvas.create_rectangle(300,600,500,670, fill="white", tags="help", outline="")
-        canvas.create_text(400,635,text='BACK',font=('Roboto','23','bold'),tags='back') 
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 #=====================back to window=====================
 def goBack(event):
     global displayHomeBg
@@ -115,7 +106,6 @@ def playGame():
     root.bind('<w>',moveUp)
     root.bind('<d>',moveDown)
     root.bind('<space>',createBullet) 
-<<<<<<< HEAD
 def bulletMeetEnemy():
     global score,displayPlayBg, gameProcessing,gameWin
     if not gameWin:
@@ -130,22 +120,6 @@ def bulletMeetEnemy():
                 gameProcessing = False
                 gameWin = True
         scoreOfPlayer()
-=======
-
-def bulletMeetEnemy():
-    global score,displayPlayBg, gameProcessing,gameWin
-    meetEn = isMeetEnemy(listBulletOfPlayer,listOfEnemy)
-    if len(meetEn) > 0 and not gameWin:
-        listBulletOfPlayer.remove(meetEn[0])
-        listOfEnemy.remove(meetEn[1])
-        canvas.delete(meetEn[0])
-        canvas.delete(meetEn[1])
-        score +=1 
-        if score == 100:
-            gameProcessing = False
-            gameWin = True
-    scoreOfPlayer()
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 
 def scoreOfPlayer():
     global score
@@ -160,7 +134,6 @@ def finishGame():
         canvas.create_image(0,0, anchor=NW, image = winBg)
     else:
         canvas.create_image(0,0, anchor=NW, image = lostBg)
-<<<<<<< HEAD
         canvas.create_rectangle(120,405,320,475,fill="",tags="start",outline='none')
         
     
@@ -178,33 +151,12 @@ def createEnemy():
         enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
         listOfEnemy.append(enemy)
     if gameProcessing:
-=======
-
-        
-    
-# create enemy==================================
-def createEnemy():
-    global enemy, gameProcessing, score
-    if len(listOfEnemy)<5:
-        enemy = canvas.create_image(random.randrange(20,650),-10,anchor = NW,image=enemyIamge)
-        listOfEnemy.append(enemy)
-    if gameProcessing and score < 45:
-        canvas.after(200,createEnemy)
-    elif gameProcessing and score < 75:
-        canvas.after(1500,createEnemy)
-    elif gameProcessing:
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
         canvas.after(1000,createEnemy)
     else:
         finishGame()
 # =====================move enemy=====================  
-
 def moveEnemy():
-<<<<<<< HEAD
     global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score ,gameProcessing
-=======
-    global listOfEnemy, positionXBullet,playerX,playerY, lifeOfPlayer, score ,gameProcessing, score
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
     for enemies in listOfEnemy:
         canvas.move(enemies,0,12)
         position  = canvas.coords(enemies)
@@ -212,30 +164,20 @@ def moveEnemy():
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
             lifeOfPlayer -= 1
-<<<<<<< HEAD
             blood()
             if lifeOfPlayer == 0:
                 gameProcessing = False
-=======
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
         elif ((playerY-position[1] >= -100 and playerY-position[1] <= 10) and (playerX-position[0]>=-80 and playerX-position[0]<=50)):
             listOfEnemy.remove(enemies)
             canvas.delete(enemies)
             lifeOfPlayer -= 1
+            blood()   
             if lifeOfPlayer == 0:
                 gameProcessing = False
-<<<<<<< HEAD
     if gameProcessing:
         canvas.after(100,moveEnemy)
     # else:
     #     finishGame()
-=======
-            blood()   
-    if gameProcessing:
-        canvas.after(150,moveEnemy)
-    else:
-        finishGame()
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 # =====================create player=====================
 def createPlayer():
     global player, playerX, playerY
@@ -245,12 +187,8 @@ def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
     if gameProcessing:
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
-<<<<<<< HEAD
         listBulletOfPlayer.append(bulletOfPlayer)
         winsound.PlaySound('sound\shoot.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
-=======
-        listBulletOfPlayer.append(bulletOfPlayer)        
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin
@@ -262,11 +200,7 @@ def moveBullet():
                 listBulletOfPlayer.remove(bulletOfPlayer)
                 canvas.delete(bulletOfPlayer)
         bulletMeetEnemy()
-<<<<<<< HEAD
         canvas.after(20,moveBullet) 
-=======
-        canvas.after(50,moveBullet) 
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 
 # ==============================is bullet of player meet enemy==============================
 def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
@@ -278,10 +212,6 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
             if ((positionBulletOfPlayer[1]- positionOfEnemy[1]<=10) and (positionBulletOfPlayer[1]- positionOfEnemy[1]>= -10)) and (((positionBulletOfPlayer[0] - positionOfEnemy[0]>=0) and (positionBulletOfPlayer[0] - positionOfEnemy[0]<=60))):
                 delete.append(playerBullet)
                 delete.append(enemy)
-<<<<<<< HEAD
-=======
-                winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
     return delete
 
 # ==============================Move player ==============================
@@ -327,13 +257,7 @@ def blood():
 canvas.tag_bind("start","<Button-1>", windowPlay)
 canvas.tag_bind('back','<Button-1>',goBack)
 canvas.tag_bind("exit","<Button-1>", exitFromGame)
-<<<<<<< HEAD
 # canvas.tag_bind("help", "<Button-1>", help)
 canvas.tag_bind("help", "<Button-1>", displayHelp) 
-=======
-canvas.tag_bind("help", "<Button-1>", help)
-canvas.tag_bind("help", "<Button-1>", displayHelp) 
-
->>>>>>> 049db2ffd794b5c375e3827912e4f0edfc9a313f
 canvas.pack()
 root.mainloop()

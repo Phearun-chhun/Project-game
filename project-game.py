@@ -20,8 +20,8 @@ bgPlay = ImageTk.PhotoImage(Image.open("image/bg_play.png"))
 enemyIamge= ImageTk.PhotoImage(Image.open("image/plane-match.png"))
 playerImage = ImageTk.PhotoImage(Image.open("image/plane-player (4).png"))
 playerBullet = ImageTk.PhotoImage(Image.open("image/playerBullet 1 (1).png"))
-lostBg = ImageTk.PhotoImage(Image.open("image/Game over.png"))
-winBg = ImageTk.PhotoImage(Image.open("image/you win.png"))
+lostBg = ImageTk.PhotoImage(Image.open("image/game-over.png"))
+winBg = ImageTk.PhotoImage(Image.open("image/winner.png"))
 
 # =====================variable=====================
 gameProcessing = True
