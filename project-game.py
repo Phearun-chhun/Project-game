@@ -40,10 +40,6 @@ paused = False
 positionXBullet = 0
 positionYBullet = 0
 
-# =====================sound=====================
-def displaySound():
-    winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC)
-    canvas.after(2000,displaySound)
 # =====================Start Window=====================
 def displayBackground():
     global displayHomeBg, displayPlayBg, score
@@ -184,7 +180,7 @@ def createBullet(event):
     global playerX, playerY,bulletOfPlayer,listBulletOfPlayer,bulletOfPlayer,gameProcessing
     if gameProcessing:
         bulletOfPlayer = canvas.create_image(playerX+48,playerY, image=playerBullet,tags= 'player-bullet')
-        listBulletOfPlayer.append(bulletOfPlayer)
+        listBulletOfPlayer.append(bulletOfPlayer)        
 #     =====================move bullet of player=====================
 def moveBullet():
     global bulletOfPlayer,listBulletOfPlayer, gameWin
@@ -208,6 +204,7 @@ def isMeetEnemy(listBulletOfPlayer,listOfEnemy):
             if ((positionBulletOfPlayer[1]- positionOfEnemy[1]<=10) and (positionBulletOfPlayer[1]- positionOfEnemy[1]>= -10)) and (((positionBulletOfPlayer[0] - positionOfEnemy[0]>=0) and (positionBulletOfPlayer[0] - positionOfEnemy[0]<=60))):
                 delete.append(playerBullet)
                 delete.append(enemy)
+                winsound.PlaySound('sound\drop.wav',winsound.SND_FILENAME | winsound.SND_ASYNC) 
     return delete
 
 # ==============================Move player ==============================
